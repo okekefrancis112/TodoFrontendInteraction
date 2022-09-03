@@ -18,7 +18,7 @@ async function getTodoList() {
 }
 
 
-const upadateTodoUI = async () => {
+const updateTodoUI = async () => {
   const data = await getTodoList();
   console.log(data, "data");
   data.forEach((item) => {
@@ -27,6 +27,46 @@ const upadateTodoUI = async () => {
   });
 };
 
-upadateTodoUI();
+updateTodoUI();
 
 // add new list
+
+const createNewTodo = async (title, description) => {
+  
+  const contract = getContract(true);
+
+  console.log(contract);
+
+  try{
+
+    console.log(title,  description);
+
+    const tnx = await contract.createTodo(title, description);
+
+    const res = await tnx.wait();
+
+    console.log("created...", res);
+
+    todos.innerHTML = "";
+    
+    await updateTodoUI();
+
+  } catch(error) {
+    console.log("error", error);
+  }
+  finally {
+    console.log("done");
+  }
+}
+
+todoBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const todoTitle = title.value;
+  const todoDescription = description.value;
+
+  // console.log(todoTitle,  todoDescription); 
+
+  await createNewTodo(todoTitle, todoDescription);
+});
+
